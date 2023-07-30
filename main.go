@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"net/http"
+	"strconv"
 )
 
 const coinAPIURL = "https://rest.coinapi.io/v1/exchangerate"
@@ -61,54 +63,79 @@ func converterMoeda(valor float64, de, para string) (float64, error) {
 	return valorConvertido, nil
 }
 
-type ConvertRequest struct {
-	Amount float64 `json:"amount"`
-	From   string  `json:"from"`
-	To     string  `json:"to"`
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.New("index").Parse(`
+	<!DOCTYPE html>
+	<html>
+	<head>
+		<link rel="stylesheet" href="/styles.css">
+		<title>Conversor de Moedas</title>
+	</head>
+	<body>
+		<h1>Conversor de Moedas</h1>
+		<form action="/exchange" method="post">
+			<label for="amount">Insira o valor a converter:</label>
+			<input type="number" name="amount" step="0.01" placeholder="Digite o valor" required>
+
+			<label for="from">Moeda para conversão:</label>
+			<select name="from" required>
+				{{range $key, $value := .Moedas}}
+				<option value="{{$key}}">{{$value}}</option>
+				{{end}}
+			</select>
+
+			<label for="to">Moeda convertida:</label>
+			<select name="to" required>
+				{{range $key, $value := .Moedas}}
+				<option value="{{$key}}">{{$value}}</option>
+				{{end}}
+			</select>
+
+			<button type="submit">Converter</button>
+		</form>
+	</body>
+	</html>
+	`))
+
+	data := struct {
+		Moedas map[string]string
+	}{
+		Moedas: moedas,
+	}
+
+	tmpl.Execute(w, data)
 }
 
-type ConvertResponse struct {
-	ConvertedValue float64 `json:"convertedValue"`
-}
-
-// Endpoint para conversão de moeda
 func convertHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Método não suportado", http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Decodifica o corpo da solicitação para ConvertRequest
-	var req ConvertRequest
-	err := json.NewDecoder(r.Body).Decode(&req)
+	amount, err := strconv.ParseFloat(r.FormValue("amount"), 64)
 	if err != nil {
-		http.Error(w, "Falha ao ler o corpo da solicitação", http.StatusBadRequest)
+		http.Error(w, "Valor inválido", http.StatusBadRequest)
 		return
 	}
 
-	// Realiza a conversão da moeda
-	valorConvertido, err := converterMoeda(req.Amount, req.From, req.To)
+	from := r.FormValue("from")
+	to := r.FormValue("to")
+
+	valorConvertido, err := converterMoeda(amount, from, to)
 	if err != nil {
 		http.Error(w, "Falha na conversão", http.StatusInternalServerError)
 		return
 	}
 
-	// Prepara a resposta como ConvertResponse em formato JSON
-	res := ConvertResponse{
-		ConvertedValue: valorConvertido,
-	}
-
-	// Define o cabeçalho Content-Type para JSON e envia a resposta
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+	fmt.Fprintf(w, "%.2f %s = %.2f %s\n", amount, from, valorConvertido, to)
 }
 
 func main() {
-	http.HandleFunc("/convert", convertHandler)
+	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/exchange", convertHandler)
 
-	// Servir o arquivo styles.css
 	fs := http.FileServer(http.Dir("."))
-	http.Handle("/styles.css", fs)
+    http.Handle("/styles.css", fs)
 
 	fmt.Println("Servidor rodando em http://localhost:8000")
 	http.ListenAndServe(":8000", nil)
