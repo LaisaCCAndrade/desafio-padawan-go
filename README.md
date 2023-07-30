@@ -1,68 +1,33 @@
-# Vaga Padawan
+<h1 align="center"> Conversor de Moedas com Gráfico de Linhas </h1>
+Este é um pequeno projeto em Go (Golang) que implementa um conversor de moedas com gráfico de linhas para visualizar as flutuações das quatro moedas (USD, BRL, EUR e BTC) em relação ao Dólar Americano nos últimos 12 meses. O conversor utiliza a API CoinAPI para obter as taxas de câmbio das moedas em relação ao Dólar.
 
-Genesis está em busca de um(a) jedi para seu time de tecnologia.
+## Pré-requisitos
+- Antes de executar o projeto, é necessário ter o Go (Golang) instalado em sua máquina. Além disso, você precisará de uma chave de API da CoinAPI para acessar as taxas de câmbio.
 
-# Para quem é essa vaga?
+- Instalação do Go (Golang)
+- Chave de API da CoinAPI
+- Como executar o projeto
+- Clone este repositório ou faça o download do código.
 
-Essa vaga é para você que está cansado de trabalhar sem ter uma motivação e deseja em trabalhar com produtos inovadores.
+- No arquivo main.go, substitua o valor da variável apiKey pela sua chave de API da CoinAPI:
 
-# Requisitos
+- const apiKey = "SUA_CHAVE_DE_API_AQUI"
+Abra o terminal e navegue até a pasta do projeto.
 
+Execute o seguinte comando para executar o servidor:
 
-1. Programar em Golang.
-2. Entender de Mysql.
-3. Entender o básico de docker.
-4. Entender o básico de grpc.
+```bash
+go run main.go
+```
 
- 
+O servidor estará rodando em http://localhost:8000. Abra o navegador e acesse essa URL para utilizar o conversor de moedas com o gráfico de linhas.
+Funcionalidades
+O conversor de moedas permite que você insira um valor em qualquer uma das moedas (USD, BRL, EUR ou BTC) e selecione a moeda para a qual deseja converter. Após clicar no botão "Converter", o valor convertido será exibido abaixo do formulário.
 
-# Sobre a Genesis
+O gráfico de linhas mostra as flutuações das quatro moedas (USD, BRL, EUR e BTC) em relação ao Dólar Americano nos últimos 12 meses. Cada moeda possui uma linha colorida diferente no gráfico para facilitar a visualização.
 
-Genesis é uma conta digital PJ com um superApp para empresa.
-Produtos da Genesis:
+## Agradecimentos
+Este projeto utiliza a API CoinAPI (https://www.coinapi.io/) para obter as taxas de câmbio das moedas em relação ao Dólar Americano. Muito obrigado à equipe da CoinAPI por fornecer esse serviço!
 
-1. Api para integração com todos os produtos .
-2. Conta Digital PJ.
-3. Gift  card digital.
-4. Emissão de nota fiscal.
-5. Sistema de pagamento com criptomoeda.
-6. Cambio.
-7. Moedas estrangeiras.
-
-
-# Passo a passo
-
-1. Fazer teste
-2.  Cadastrar seus dados e o link do seu teste.
-3.  [https://xbs70gdcwqd.typeform.com/to/j4JO5Lmz](https://xbs70gdcwqd.typeform.com/to/YaODTyyp)
-4. Entrevista via meet
-
-
-# Teste
-
-Desenvolva uma **REST API** que faça conversão de moedas.
-
-**Especifícações**:
-
-* A URL da requisição deve seguir o seguinte formato:
-    * http://localhost:8000/exchange/{amount}/{from}/{to}/{rate}
-    * http://localhost:8000/exchange/10/BRL/USD/4.50
-* A resposta deve seguir o seguinte formato:
-   ```json
-   {
-     "valorConvertido": 45,
-     "simboloMoeda": "$"
-   }
-   
-   * Conversões:
-    * De Real para Dólar;
-    * De Dólar para Real;
-    * De Real para Euro;
-    * De Euro para Real;
-    * De BTC para Dolar;
-    * De BTC para Real;
-   
-   * Salvar os dados no banco de dados:
-    * criar uma rotina para salvar o dados para consultas futuras
-
-   ```
+## Autora
+- **Laisa Andrade** - [Github](https://github.com/LaisaCCAndrade)

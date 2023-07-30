@@ -374,9 +374,6 @@ func main() {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/exchange", convertHandler)
 
-	fs := http.FileServer(http.Dir("."))
-	http.Handle("./styles.css", fs)
-
 	fmt.Println("Servidor rodando em http://localhost:8000")
 	http.ListenAndServe(":8000", nil)
 }
